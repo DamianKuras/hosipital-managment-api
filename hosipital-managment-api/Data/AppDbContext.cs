@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using hosipital_managment_api.Models;
+using Microsoft.EntityFrameworkCore;
 namespace hosipital_managment_api.Data
 {
     public class AppDbContext:DbContext
@@ -6,6 +7,6 @@ namespace hosipital_managment_api.Data
         public AppDbContext(DbContextOptions options) : base(options)
         {
         }
-        public DbSet<Medicne> Medicines;
+        public DbSet<Medicine> Medicines { get; set; }
     }
 }

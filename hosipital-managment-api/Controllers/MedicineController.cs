@@ -1,4 +1,5 @@
 ﻿using hosipital_managment_api.Data;
+using hosipital_managment_api.Interface;
 using hosipital_managment_api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,24 +11,77 @@ namespace hosipital_managment_api.Controllers
     [ApiController]
     public class MedicineController : ControllerBase
     {
-        private readonly AppDbContext _dbContext;
-        public MedicineController(AppDbContext dbContext)
+        private readonly IMedicineRepository _medicineRepository;
+        public MedicineController(IMedicineRepository medicineRepository)
         {
-            _dbContext = dbContext;
+            _medicineRepository = medicineRepository;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var ret = await _dbContext.Medicines.ToListAsync();
-            return new JsonResult(ret);
+            var medicines = _medicineRepository.GetMedicines();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            return Ok(medicines);
         }
+        [HttpGet("{id}")]
+        public IActionResult GetMedicine(int id)
+        {
+            if (!_medicineRepository.MedicineExist(id))
+            {
+                return NotFound();
+            }
+            var medicine=_medicineRepository.GetMedicine(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            return Ok(medicine);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(Medicine medicine)
         {
-            _dbContext.Medicines.Add(medicine);
-            await _dbContext.SaveChangesAsync();
+            if (medicine == null)
+                return BadRequest(ModelState);
 
-            return new JsonResult(medicine.Id);
+            if (!_medicineRepository.CreateMedicine(medicine))
+            {
+                ModelState.AddModelError("", "Error when adding medicine to database please try again latter");
+                return StatusCode(500, ModelState);
+            }
+            return Ok("Succesfully created medicine");
         }
+        [HttpPut("{id}")]
+        public IActionResult UpdateMedicine(Medicine medicine)
+        {
+            if (medicine == null)
+                return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            if (!_medicineRepository.UpdateMedicine(medicine))
+            {
+                ModelState.AddModelError("", "Error when updataing medicine please try again latter");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+        }
+        [HttpDelete("{id}")]
+        public IActionResult DeleteMedicine(int id)
+        {
+            if (!_medicineRepository.MedicineExist(id))
+            {
+                return NotFound();
+            }
+            var medicineToDelete = _medicineRepository.GetMedicine(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if (!_medicineRepository.DeleteMedicine(medicineToDelete))
+            {
+                ModelState.AddModelError("", "Error when deleting medicine please try again latter");
+            }
+            return NoContent();
+        }
+
     }
 }

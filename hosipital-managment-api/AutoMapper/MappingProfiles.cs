@@ -8,7 +8,7 @@ namespace hosipital_managment_api.AutoMapper
     {
         public MappingProfiles()
         {
-            CreateMap<UserDto, ApiUser > ();
+            CreateMap<RegisterDto, ApiUser > ();
             
         }
     }

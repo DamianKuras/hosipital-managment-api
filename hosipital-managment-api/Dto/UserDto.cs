@@ -2,7 +2,7 @@
 
 namespace hosipital_managment_api.Dto
 {
-    public class UserDto
+    public class RegisterDto
     {
         [Required]
         public string Username { get; set; }
@@ -16,7 +16,12 @@ namespace hosipital_managment_api.Dto
         public string Email { get; set; }
 
         [Required]
-        [StringLength(15, ErrorMessage = "Your password needs to be between {1} and {2} characters",MinimumLength =5)]
+        [StringLength(15, ErrorMessage = "Your password needs to be between {1} and {2} characters", MinimumLength = 5)]
+        public string Password { get; set; }
+    }
+    public class LoginDto
+    {
+        public string Username { get; set; }
         public string Password { get; set; }
     }
 }

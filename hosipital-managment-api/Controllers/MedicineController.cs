@@ -1,12 +1,14 @@
 ﻿using hosipital_managment_api.Data;
 using hosipital_managment_api.Interface;
 using hosipital_managment_api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace hosipital_managment_api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MedicineController : ControllerBase

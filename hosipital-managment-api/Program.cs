@@ -3,7 +3,6 @@ using hosipital_managment_api.Interface;
 using hosipital_managment_api.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using System.Data.SqlClient;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -51,7 +50,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddSwaggerGen(option =>
 {
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "HMS API", Version = "v1" });
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -77,6 +76,7 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
+var RoleManager = ;
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

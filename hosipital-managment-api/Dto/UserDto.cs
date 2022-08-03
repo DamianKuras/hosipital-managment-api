@@ -5,10 +5,12 @@ namespace hosipital_managment_api.Dto
     public class RegisterDto
     {
         [Required]
-        public string Username { get; set; }
+        public string Username { get; set; } 
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
-
+        [Required]
         [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
         [Required]

@@ -16,19 +16,27 @@ namespace hosipital_managment_api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApiUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
-        public AccountController(UserManager<ApiUser> userManager, IMapper mapper, IConfiguration configuration)
+        public AccountController(UserManager<ApiUser> userManager, IMapper mapper, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _configuration = configuration;
             _mapper = mapper;
+            _roleManager = roleManager;
         }
 
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
+            var userExists = await _userManager.FindByNameAsync(registerDto.Username);
+            if (userExists != null)
+            {
+                return BadRequest(ModelState);
+            }
+                
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState); 
@@ -80,7 +88,6 @@ namespace hosipital_managment_api.Controllers
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],

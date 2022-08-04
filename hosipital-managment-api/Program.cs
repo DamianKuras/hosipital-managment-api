@@ -76,8 +76,9 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-var RoleManager = ;
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -91,6 +92,24 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+
 app.MapControllers();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var userManager = services.GetRequiredService<UserManager<ApiUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        SeedData.SeedRoles(roleManager);
+        SeedData.SeedAdmin(roleManager, userManager, builder.Configuration["AdminPassword"].ToString());
+    }
+    catch (Exception)
+    {
+        throw;
+    }
+}
 
 app.Run();

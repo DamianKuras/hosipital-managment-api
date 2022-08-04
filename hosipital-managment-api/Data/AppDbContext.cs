@@ -9,6 +9,5 @@ namespace hosipital_managment_api.Data
         {
         }
         public DbSet<Medicine> Medicines { get; set; }
-        public DbSet<Doctor> Doctors { get; set; }
     }
 }

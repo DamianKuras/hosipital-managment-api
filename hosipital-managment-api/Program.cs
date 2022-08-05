@@ -13,7 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.UseDateOnlyTimeOnlyStringConverters())
+    .AddJsonOptions(options => options.UseDateOnlyTimeOnlyStringConverters()); 
 
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -74,8 +75,8 @@ builder.Services.AddSwaggerGen(option =>
             new string[]{}
         }
     });
+    option.UseDateOnlyTimeOnlyStringConverters();
 });
-
 var app = builder.Build();
 
 

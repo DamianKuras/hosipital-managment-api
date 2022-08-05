@@ -51,6 +51,7 @@ namespace hosipital_managment_api.Controllers
                 }
                 return BadRequest(ModelState);
             }
+            await _userManager.AddToRoleAsync(user, "Patient");
             return Accepted();
         }
 

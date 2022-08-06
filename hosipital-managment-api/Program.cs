@@ -19,6 +19,7 @@ builder.Services.AddControllers(options => options.UseDateOnlyTimeOnlyStringConv
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
+builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var connection = builder.Configuration.GetConnectionString("AppDbConnection") 

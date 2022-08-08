@@ -1,5 +1,8 @@
 ﻿using hosipital_managment_api.Data;
+using hosipital_managment_api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -73,6 +76,25 @@ namespace hosipital_managment_api.Extensions
                 };
             });
             return services;
+        }
+        public static void ConfigureExceptionHandler2(this IApplicationBuilder app)
+        {
+            app.UseExceptionHandler(error =>
+            {
+                error.Run(async context=> {
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    context.Response.ContentType = "aplication/json";
+                    var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    if (contextFeature != null)
+                    {
+                        await context.Response.WriteAsync(new Error
+                        {
+                            StatusCode = context.Response.StatusCode,
+                            Message = "Something went wrong. Please try again latter"
+                        }.ToString());
+                    }
+                });
+            });
         }
     }
 }

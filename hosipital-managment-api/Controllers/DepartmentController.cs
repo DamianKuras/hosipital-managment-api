@@ -16,6 +16,7 @@ namespace hosipital_managment_api.Controllers
         {
             _departmentRepository = departmentRepository;
         }
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get()
         {

@@ -3,7 +3,6 @@ using hosipital_managment_api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
 namespace hosipital_managment_api.Controllers
 {
     [Authorize(Roles = "Admin")]

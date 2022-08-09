@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Serilog;
 
 namespace hosipital_managment_api.Extensions
 {
@@ -87,6 +88,7 @@ namespace hosipital_managment_api.Extensions
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                     if (contextFeature != null)
                     {
+                        Log.Error($"something went wrong in the {contextFeature.Error}");
                         await context.Response.WriteAsync(new Error
                         {
                             StatusCode = context.Response.StatusCode,

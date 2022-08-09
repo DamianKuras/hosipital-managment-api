@@ -8,9 +8,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using hosipital_managment_api.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
+            loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
 builder.Services.AddControllers(options => options.UseDateOnlyTimeOnlyStringConverters())
     .AddJsonOptions(options => options.UseDateOnlyTimeOnlyStringConverters()); 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

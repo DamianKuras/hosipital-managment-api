@@ -10,5 +10,7 @@ namespace hosipital_managment_api.Data
         }
         public DbSet<Medicine> Medicines { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Prescription> Prescriptions { get; set; }
+        public DbSet<PrescriptionMedicine> PrescriptionMedicines { get; set; }
     }
 }

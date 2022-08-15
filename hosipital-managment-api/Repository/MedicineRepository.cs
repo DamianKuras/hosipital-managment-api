@@ -1,6 +1,7 @@
 ﻿using hosipital_managment_api.Data;
 using hosipital_managment_api.Models;
 using hosipital_managment_api.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace hosipital_managment_api.Repository
 {
@@ -11,47 +12,49 @@ namespace hosipital_managment_api.Repository
         {
             _context = context;
         }
-        public ICollection<Medicine> GetMedicines()
+
+        public async Task<IEnumerable<Medicine>> GetMedicines()
         {
-            return _context.Medicines.ToList();
+            return await _context.Medicines.ToListAsync();
         }
-        public Medicine GetMedicine(int id)
+
+        public async Task<Medicine> GetMedicine(int id)
         {
-            return _context.Medicines.Where(p => p.Id == id).FirstOrDefault();
+            return await _context.Medicines.Where(p => p.Id == id).FirstOrDefaultAsync();
         }
-        public Medicine GetMedicine(string name)
+
+        public async Task<Medicine> GetMedicine(string name)
         {
-            return _context.Medicines.Where(p=>p.Name == name).FirstOrDefault();
+            return await _context.Medicines.Where(p => p.Name == name).FirstOrDefaultAsync();
         }
-        public bool CreateMedicine(Medicine medicine)
+
+        public async Task<bool> CreateMedicine(Medicine medicine)
         {
             _context.Medicines.Add(medicine);
-            return Save();
-
+            return await Save();
         }
 
-
-        public bool UpdateMedicine(Medicine medicine)
+        public async Task<bool> UpdateMedicine(Medicine medicine)
         {
             _context.Update(medicine);
-            return Save();
+            return await Save();
         }
 
-        public bool DeleteMedicine(Medicine medicine)
+        public async Task<bool> DeleteMedicine(Medicine medicine)
         {
             _context.Remove(medicine);
-            return Save();
+            return await Save();
         }
 
-        public bool Save()
+        public async Task<bool> Save()
         {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
+            var saved = await _context.SaveChangesAsync();
+            return saved > 0;
         }
 
-        public bool MedicineExist(int id)
+        public async Task<bool> MedicineExist(int id)
         {
-            return _context.Medicines.Any(p=>p.Id == id);
+            return await _context.Medicines.AnyAsync(p=>p.Id == id);
         }
     }
 }

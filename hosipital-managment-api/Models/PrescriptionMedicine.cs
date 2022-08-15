@@ -7,6 +7,5 @@
         public string Strength { get; set; }
         public string Dosage { get; set; }
         public string RouteOfAdmininstration { get; set; }
-
     }
 }

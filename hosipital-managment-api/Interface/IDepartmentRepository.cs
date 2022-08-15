@@ -4,12 +4,12 @@ namespace hosipital_managment_api.Interface
 {
     public interface IDepartmentRepository
     {
-        public ICollection<Department> GetDepartments();
-        public Department GetDepartment(int id);
-        public Department GetDepartment(string name);
-        public bool CreateDepartment(Department department);
-        public bool UpdateDepartment(Department department);
-        public bool DeleteDepartment(Department department);
-        public bool DepartmentExist(int id);
+        public Task<IEnumerable<Department>> GetDepartments();
+        public Task<Department> GetDepartment(int id);
+        public Task<Department> GetDepartment(string name);
+        public Task<bool> CreateDepartment(Department department);
+        public Task<bool> UpdateDepartment(Department department);
+        public Task<bool> DeleteDepartment(Department department);
+        public Task<bool> DepartmentExist(int id);
     }
 }

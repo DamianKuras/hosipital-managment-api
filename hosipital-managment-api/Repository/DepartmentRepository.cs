@@ -1,6 +1,7 @@
 ﻿using hosipital_managment_api.Data;
 using hosipital_managment_api.Interface;
 using hosipital_managment_api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace hosipital_managment_api.Repository
 {
@@ -11,48 +12,47 @@ namespace hosipital_managment_api.Repository
         {
             _context = context;
         }
-        public bool CreateDepartment(Department department)
+        public async Task<bool> CreateDepartment(Department department)
         {
             _context.Departments.Add(department);
-            return Save();
+            return await Save();
         }
 
-        public bool DeleteDepartment(Department department)
+        public async Task<bool> DeleteDepartment(Department department)
         {
             _context.Remove(department);
-            return Save();
+            return await Save();
         }
 
-        public bool DepartmentExist(int id)
+        public async Task<bool> DepartmentExist(int id)
         {
-            return _context.Medicines.Any(p => p.Id == id);
+            return await _context.Departments.AnyAsync(p => p.Id == id);
         }
 
-        public Department GetDepartment(int id)
+        public async Task<Department> GetDepartment(int id)
         {
-            return _context.Departments.Where(p => p.Id == id).FirstOrDefault();
+            return await _context.Departments.Where(p => p.Id == id).FirstOrDefaultAsync();
         }
 
-        public Department GetDepartment(string name)
+        public async Task<Department> GetDepartment(string name)
         {
-            return _context.Departments.Where(p => p.Name == name).FirstOrDefault();
+            return await _context.Departments.Where(p => p.Name == name).FirstOrDefaultAsync();
         }
 
-        public ICollection<Department> GetDepartments()
+        public async Task<IEnumerable<Department>> GetDepartments()
         {
-            return _context.Departments.ToList();
+            return await _context.Departments.ToListAsync();
         }
 
-        public bool UpdateDepartment(Department department)
+        public async Task<bool> UpdateDepartment(Department department)
         {
             _context.Departments.Update(department);
-            return Save();
+            return await Save();
         }
 
-
-        public bool Save()
+        public async Task<bool> Save()
         {
-            var saved = _context.SaveChanges();
+            var saved = await _context.SaveChangesAsync();
             return saved > 0 ? true : false;
         }
     }

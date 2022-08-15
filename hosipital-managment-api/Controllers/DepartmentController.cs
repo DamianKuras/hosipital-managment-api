@@ -15,26 +15,28 @@ namespace hosipital_managment_api.Controllers
         {
             _departmentRepository = departmentRepository;
         }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var medicines = _departmentRepository.GetDepartments();
+            var departments = await _departmentRepository.GetDepartments();
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            return Ok(medicines);
+            return Ok(departments);
         }
+
         [HttpGet("{id}")]
-        public IActionResult GetDepartment(int id)
+        public async Task<IActionResult> GetDepartment(int id)
         {
-            if (!_departmentRepository.DepartmentExist(id))
+            if (!await _departmentRepository.DepartmentExist(id))
             {
                 return NotFound();
             }
-            var medicine = _departmentRepository.GetDepartment(id);
+            var department = await _departmentRepository.GetDepartment(id);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            return Ok(medicine);
+            return Ok(department);
         }
 
         [HttpPost]
@@ -43,15 +45,16 @@ namespace hosipital_managment_api.Controllers
             if (department == null)
                 return BadRequest(ModelState);
 
-            if (!_departmentRepository.CreateDepartment(department))
+            if (!await _departmentRepository.CreateDepartment(department))
             {
                 ModelState.AddModelError("", "Error when adding department to database please try again latter");
                 return StatusCode(500, ModelState);
             }
             return Ok("Succesfully created department");
         }
+
         [HttpPut("{id}")]
-        public IActionResult UpdateMedicine(Department department)
+        public async Task<IActionResult> UpdateMedicine(Department department)
         {
             if (department == null)
                 return BadRequest(ModelState);
@@ -59,24 +62,25 @@ namespace hosipital_managment_api.Controllers
             {
                 return BadRequest();
             }
-            if (!_departmentRepository.UpdateDepartment(department))
+            if (!await _departmentRepository.UpdateDepartment(department))
             {
                 ModelState.AddModelError("", "Error when updataing medicine please try again latter");
                 return StatusCode(500, ModelState);
             }
             return NoContent();
         }
+
         [HttpDelete("{id}")]
-        public IActionResult DeleteMedicine(int id)
+        public async Task<IActionResult> DeleteMedicine(int id)
         {
-            if (!_departmentRepository.DepartmentExist(id))
+            if (!await _departmentRepository.DepartmentExist(id))
             {
                 return NotFound();
             }
-            var medicineToDelete = _departmentRepository.GetDepartment(id);
+            var medicineToDelete = await _departmentRepository.GetDepartment(id);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            if (!_departmentRepository.DeleteDepartment(medicineToDelete))
+            if (!await _departmentRepository.DeleteDepartment(medicineToDelete))
             {
                 ModelState.AddModelError("", "Error when deleting department please try again latter");
             }

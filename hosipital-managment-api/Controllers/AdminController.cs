@@ -39,7 +39,6 @@ namespace hosipital_managment_api.Controllers
             return Ok(user);
         }
 
-
         [HttpDelete]
         [Route("user/delete/{id}")]
         public async Task<IActionResult> DeleteUser(string id)

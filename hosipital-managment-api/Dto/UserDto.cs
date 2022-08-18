@@ -26,4 +26,5 @@ namespace hosipital_managment_api.Dto
         public string Username { get; set; }
         public string Password { get; set; }
     }
+
 }

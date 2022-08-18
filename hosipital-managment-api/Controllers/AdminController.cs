@@ -21,6 +21,8 @@ namespace hosipital_managment_api.Controllers
 
         [HttpGet]
         [Route("users")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiUser))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Get()
         {
             var users = _userManager.Users.ToList();
@@ -31,6 +33,8 @@ namespace hosipital_managment_api.Controllers
 
         [HttpGet]
         [Route("user/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiUser))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUser(string id)
         {
             var user = _context.Users.FindAsync(id);
@@ -41,6 +45,9 @@ namespace hosipital_managment_api.Controllers
 
         [HttpDelete]
         [Route("user/delete/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id); 

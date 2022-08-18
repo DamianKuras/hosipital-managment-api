@@ -20,6 +20,8 @@ namespace hosipital_managment_api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Medicine))]
         public async Task<IActionResult> Get()
         {
             var medicines = await _medicineRepository.GetMedicines();
@@ -29,6 +31,9 @@ namespace hosipital_managment_api.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Medicine))]
         public async Task<IActionResult> GetMedicine(int id)
         {
 
@@ -43,6 +48,9 @@ namespace hosipital_managment_api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OkObjectResult))]
         public async Task<IActionResult> Post(Medicine medicine)
         {
             if (medicine == null)
@@ -57,6 +65,9 @@ namespace hosipital_managment_api.Controllers
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> UpdateMedicine(Medicine medicine)
         {
             if (medicine == null)
@@ -74,6 +85,9 @@ namespace hosipital_managment_api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteMedicine(int id)
         {
             if (!await _medicineRepository.MedicineExist(id))
@@ -86,6 +100,7 @@ namespace hosipital_managment_api.Controllers
             if (!await _medicineRepository.DeleteMedicine(medicineToDelete))
             {
                 ModelState.AddModelError("", "Error when deleting medicine please try again latter");
+                return BadRequest(ModelState);
             }
             return NoContent();
         }

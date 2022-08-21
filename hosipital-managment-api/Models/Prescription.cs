@@ -6,9 +6,8 @@ namespace hosipital_managment_api.Models
     {
         public int Id { get; set; }
         public ApiUser Patient { get; set; }
-        public ApiUser Doctor { get; set; }
-        public DateOnly Date { get; set; }
+        public ApiUser Doctor{get;set;}
+        public DateTime Created_at { get; set; }
         public DateOnly ExpDate { get; set; }
-        public List<PrescriptionMedicine> PrescriptionMedicines { get; set; }
     }
 }

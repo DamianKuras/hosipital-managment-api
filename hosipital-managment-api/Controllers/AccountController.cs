@@ -19,7 +19,8 @@ namespace hosipital_managment_api.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
-        public AccountController(UserManager<ApiUser> userManager, IMapper mapper, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
+        public AccountController(UserManager<ApiUser> userManager, 
+            IMapper mapper, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _configuration = configuration;

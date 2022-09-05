@@ -27,7 +27,7 @@ builder.Services.AddIdentityCore<ApiUser>(options => options.SignIn.RequireConfi
     .AddDefaultTokenProviders().AddRoles<IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 builder.Services.ConfigureAuthenthication(builder.Configuration);
 builder.Services.ConfigureSwagger();
-
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var app = builder.Build();
 app.ConfigureExceptionHandler2();
 if (app.Environment.IsDevelopment())

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using hosipital_managment_api.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace hosipital_managment_api.Data
 {
@@ -24,6 +25,7 @@ namespace hosipital_managment_api.Data
                 }
             }
         }
+
         public static void SeedRoles(RoleManager<IdentityRole> roleManager)
         {
             string[] roles = { "Admin", "Doctor", "Pharmacist", "Patient", "Nurse", "Laboratorist" };

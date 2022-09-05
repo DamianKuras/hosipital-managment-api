@@ -6,6 +6,6 @@
         public string Name { get; set; }
         public string Strength { get; set; }
         public string Description { get; set; }
-        public string RouteOfAdmininstration { get; set; }
+        public string RouteOfAdministration { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace hosipital_managment_api.Controllers
 {
@@ -23,9 +24,11 @@ namespace hosipital_managment_api.Controllers
         [Route("users")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiUser))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        
         public async Task<IActionResult> Get()
         {
-            var users = _userManager.Users.ToList();
+            var users = await _userManager.Users.ToListAsync();
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             return Ok(users);
@@ -35,9 +38,10 @@ namespace hosipital_managment_api.Controllers
         [Route("user/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiUser))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetUser(string id)
         {
-            var user = _context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             return Ok(user);
@@ -46,8 +50,9 @@ namespace hosipital_managment_api.Controllers
         [HttpDelete]
         [Route("user/delete/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id); 

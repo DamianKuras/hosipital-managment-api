@@ -26,17 +26,17 @@ namespace hosipital_managment_api.Repository
 
         public async Task<Prescription> GetPrescription(int id)
         {
-            return await _context.Prescriptions.Where(p => p.Id == id).FirstOrDefaultAsync();
+            return await _context.Prescriptions.Where(p => p.Id == id).Include(p => p.Doctor).Include(p => p.Patient).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Prescription>> GetPrescriptionsForDoctor(string DoctorId)
         {
-            return await _context.Prescriptions.Where(p => p.Doctor.Id == DoctorId).ToListAsync();
+            return await _context.Prescriptions.Where(p => p.Doctor.Id == DoctorId).Include(p => p.Doctor).Include(p => p.Patient).ToListAsync();
         }
 
         public async Task<IEnumerable<Prescription>> GetPrescriptionsForPatient(string PatientId)
         {
-            return await _context.Prescriptions.Where(p => p.Patient.Id == PatientId).ToListAsync();
+            return await _context.Prescriptions.Where(p => p.Patient.Id == PatientId).Include(p => p.Doctor).Include(p => p.Patient).ToListAsync();
         }
 
         public async Task<bool> PrescriptionExist(int id)

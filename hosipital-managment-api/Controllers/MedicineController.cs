@@ -50,7 +50,7 @@ namespace hosipital_managment_api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OkObjectResult))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(String))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

@@ -17,15 +17,17 @@ namespace hosipital_managment_api.Controllers
         private readonly IPrescriptionRepository _prescriptionRepository;
         private readonly IPrescriptionMedicineRepository _prescriptionMedicineRepository;
         private readonly IMedicineRepository _medicineRepository;
+        private readonly IMapper _mapper;
         private readonly UserManager<ApiUser> _userManager;
         public PrescriptionController(IPrescriptionRepository prescriptionRepository, 
             IPrescriptionMedicineRepository prescriptionMedicineRepository, IMedicineRepository medicineRepository,
-            UserManager<ApiUser> userManager)
+            UserManager<ApiUser> userManager, IMapper mapper)
         {
             _prescriptionRepository = prescriptionRepository;
             _prescriptionMedicineRepository = prescriptionMedicineRepository;
             _medicineRepository = medicineRepository;
             _userManager = userManager;
+            _mapper = mapper;
         }
 
         [Authorize(Roles = "Admin,Doctor,Nurse,Pharmacist")]
@@ -41,44 +43,9 @@ namespace hosipital_managment_api.Controllers
                 return NotFound();
             }
             var prescription = await _prescriptionRepository.GetPrescription(id);
-            var doctor = await _userManager.FindByIdAsync(prescription.DoctorId);
-            if (doctor == null)
-                return BadRequest(ModelState);
-            var patient = await _userManager.FindByIdAsync(prescription.PatientId);
-            if (patient== null)
-                return BadRequest(ModelState);
-
-            PrescriptionDisplayDTO prescriptionDisplayDTO = new PrescriptionDisplayDTO
-            {
-                Created_at = prescription.Created_at,
-                ExpDate = prescription.ExpDate,
-                DoctorFirstName = doctor.FirstName,
-                DoctorLastName = doctor.LastName,
-                PatientFirstName = patient.FirstName,
-                PatientLastName = patient.LastName,
-                PatientBirthDay = patient.BirthDay,
-                PatientCity = patient.City,
-                PatientStreet = patient.Street,
-                PatientPostcode = patient.Postcode,
-                PatientPhoneNumber = patient.PhoneNumber,
-            };
+            var prescriptionDisplayDTO =_mapper.Map<PrescriptionDisplayDTO>(prescription);
             var prescriptionMedicines = await _prescriptionMedicineRepository.GetPrescriptionMedicineForPrescription(id);
-            prescriptionDisplayDTO.PrescriptionMedicinesDTO = new List<PrescriptionMedicineDisplayDTO>();
-            foreach(var prescriptionMedicine in prescriptionMedicines)
-            {
-                var medicine = await _medicineRepository.GetMedicine(prescriptionMedicine.MedicineId);
-                PrescriptionMedicineDisplayDTO prescriptionMedicineDisplayDTO = new PrescriptionMedicineDisplayDTO
-                {
-                    Name = medicine.Name,
-                    Strength = medicine.Strength,
-                    Description = medicine.Description,
-                    RouteOfAdministration = medicine.RouteOfAdministration,
-                    Dosage = prescriptionMedicine.Dosage,
-                    MedicineId = prescriptionMedicine.Id,
-                    Quantity = prescriptionMedicine.Quantity
-                };
-                prescriptionDisplayDTO.PrescriptionMedicinesDTO.Add(prescriptionMedicineDisplayDTO);
-            }
+            prescriptionDisplayDTO.PrescriptionMedicinesDTO = _mapper.Map<IEnumerable<PrescriptionMedicineDisplayDTO>>(prescriptionMedicines);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             return Ok(prescriptionDisplayDTO);
@@ -91,31 +58,14 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Patient(string patientId)
         {
-
-            var prescriptions =  await _prescriptionRepository.GetPrescriptionsForPatient(patientId);
             var patient = await _userManager.FindByIdAsync(patientId);
             if (patient == null)
                 return NotFound();
-            List<PrescriptionsListDisplayDTO> prescriptionsDisplayDTOs = new List<PrescriptionsListDisplayDTO>();
-            foreach(var prescription in prescriptions)
-            {
-                var doctor = await _userManager.FindByIdAsync(prescription.DoctorId);
-                if (doctor == null)
-                    return BadRequest(ModelState);
-                PrescriptionsListDisplayDTO prescriptionList = new PrescriptionsListDisplayDTO
-                {
-                    Id = prescription.Id,
-                    Created_at = prescription.Created_at,
-                    ExpDate = prescription.ExpDate,
-                    PatientFirstName = patient.FirstName,
-                    PatientLastName = patient.LastName,
-                    DoctorFirstName = doctor.FirstName
-                };
-                prescriptionsDisplayDTOs.Add(prescriptionList);
-            }
+            var prescriptions = await _prescriptionRepository.GetPrescriptionsForPatient(patientId);
+            var prescriptionsListDisplayDTO = _mapper.Map<IEnumerable<PrescriptionsListDisplayDTO>>(prescriptions);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            return Ok(prescriptionsDisplayDTOs);
+            return Ok(prescriptionsListDisplayDTO);
         }
         [Authorize(Roles = "Admin,Doctor")]
         [HttpGet("Doctor/{doctorId}")]
@@ -127,31 +77,14 @@ namespace hosipital_managment_api.Controllers
         public async Task<IActionResult> Doctor(string doctorId)
         {
             var doctor = await _userManager.FindByIdAsync(doctorId);
-            if (doctor == null)
+            var isDoctor = await _userManager.IsInRoleAsync(doctor, "Doctor");
+            if (doctor == null || !isDoctor)
                 return NotFound();
             var prescriptions = await _prescriptionRepository.GetPrescriptionsForDoctor(doctorId);
-                
-            List<PrescriptionsListDisplayDTO> prescriptionsDisplayDTOs = new List<PrescriptionsListDisplayDTO>();
-            foreach (var prescription in prescriptions)
-            {
-
-                var patient = await _userManager.FindByIdAsync(prescription.PatientId);
-                if (patient == null)
-                    return BadRequest(ModelState);
-                PrescriptionsListDisplayDTO prescriptionList = new PrescriptionsListDisplayDTO
-                {
-                    Id = prescription.Id,
-                    Created_at = prescription.Created_at,
-                    ExpDate = prescription.ExpDate,
-                    PatientFirstName = patient.FirstName,
-                    PatientLastName = patient.LastName,
-                    DoctorFirstName = doctor.FirstName
-                };
-                prescriptionsDisplayDTOs.Add(prescriptionList);
-            }
+            var prescriptionsListDisplayDTO = _mapper.Map<IEnumerable<PrescriptionsListDisplayDTO>>(prescriptions);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            return Ok(prescriptionsDisplayDTOs);
+            return Ok(prescriptionsListDisplayDTO);
         }
 
         [Authorize(Roles = "Admin,Doctor,Nurse,Pharmacist")]

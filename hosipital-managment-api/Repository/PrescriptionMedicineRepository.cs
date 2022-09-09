@@ -30,6 +30,7 @@ namespace hosipital_managment_api.Repository
             return await _context.PrescriptionMedicines.Where(p => p.Id == id).FirstOrDefaultAsync();
         }
 
+
         public async Task<bool> PrescriptionMedicineExist(int id)
         {
             return await _context.PrescriptionMedicines.AnyAsync(p => p.Id == id);
@@ -48,7 +49,7 @@ namespace hosipital_managment_api.Repository
 
         public async Task<IEnumerable<PrescriptionMedicine>> GetPrescriptionMedicineForPrescription(int id)
         {
-            return await _context.PrescriptionMedicines.Where(p => p.PrescriptionId == id).ToListAsync();
+            return await _context.PrescriptionMedicines.Where(p => p.PrescriptionId == id).Include(p=>p.Medicine).ToListAsync();
         }
     }
 }

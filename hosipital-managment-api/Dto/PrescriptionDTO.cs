@@ -24,7 +24,7 @@
         public string DoctorLastName { get; set; }
         public string DoctorPhoneNumber { get; set; }
 
-        public List<PrescriptionMedicineDisplayDTO> PrescriptionMedicinesDTO { get; set; }
+        public IEnumerable<PrescriptionMedicineDisplayDTO> PrescriptionMedicinesDTO { get; set; }
 
     }
     public class PrescriptionsListDisplayDTO

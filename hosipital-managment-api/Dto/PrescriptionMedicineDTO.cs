@@ -10,10 +10,10 @@
 
     public class PrescriptionMedicineDisplayDTO
     {
-        public string Name { get; set; }
-        public string Strength { get; set; }
-        public string Description { get; set; }
-        public string RouteOfAdministration { get; set; }
+        public string MedicineName { get; set; }
+        public string MedicineStrength { get; set; }
+        public string MedicineDescription { get; set; }
+        public string MedicineRouteOfAdministration { get; set; }
         public string Dosage { get; set; }
         public int MedicineId { get; set; }
         public int Quantity { get; set; }

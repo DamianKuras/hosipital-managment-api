@@ -10,10 +10,10 @@ namespace hosipital_managment_api.Controllers
     [ApiController]
     public class DepartmentController : ControllerBase
     {
-        private readonly IDepartmentRepository _departmentRepository;
-        public DepartmentController(IDepartmentRepository departmentRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public DepartmentController(IUnitOfWork unitOfWork)
         {
-            _departmentRepository = departmentRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [AllowAnonymous]
@@ -22,9 +22,11 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Get()
         {
-            var departments = await _departmentRepository.GetDepartments();
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var departments = await _unitOfWork.DepartmentRepository.GetAll();
+            if(departments == null)
+            {
+                return NoContent();
+            }
             return Ok(departments);
         }
 
@@ -35,32 +37,32 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(int id)
         {
-            if (!await _departmentRepository.DepartmentExist(id))
+            var department = await _unitOfWork.DepartmentRepository.GetById(id);
+            if(department == null)
             {
                 return NotFound();
             }
-            var department = await _departmentRepository.GetDepartment(id);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             return Ok(department);
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OkObjectResult))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post(Department department)
+        public async Task<IActionResult> Post([FromBody] Department department)
         {
             if (department == null)
                 return BadRequest(ModelState);
-
-            if (!await _departmentRepository.CreateDepartment(department))
+            await _unitOfWork.DepartmentRepository.Add(department);
+            if (!await _unitOfWork.Save())
             {
                 ModelState.AddModelError("", "Error when adding department to database please try again latter");
                 return StatusCode(500, ModelState);
             }
-            return Ok("Succesfully created department");
+            return CreatedAtAction(nameof(Get),new {id=department.Id},department);
         }
 
         [HttpPut("{id}")]
@@ -68,17 +70,24 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update(Department department)
+        public async Task<IActionResult> Update(int id,[FromBody] Department department)
         {
-            if (department == null)
+            if (department == null || id != department.Id)
                 return BadRequest(ModelState);
+            var departmentToUpdate = _unitOfWork.DepartmentRepository.GetById(id);
+            if(departmentToUpdate == null)
+            {
+                return BadRequest(ModelState);
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            if (!await _departmentRepository.UpdateDepartment(department))
+            _unitOfWork.DepartmentRepository.Update(department);
+
+            if (!await _unitOfWork.Save())
             {
-                ModelState.AddModelError("", "Error when updataing medicine please try again latter");
+                ModelState.AddModelError("", "Error when updataing department please try again latter");
                 return StatusCode(500, ModelState);
             }
             return NoContent();
@@ -91,14 +100,13 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
-            if (!await _departmentRepository.DepartmentExist(id))
+            var departmentToDelete = await _unitOfWork.DepartmentRepository.GetById(id);
+            if (departmentToDelete == null)
             {
                 return NotFound();
             }
-            var medicineToDelete = await _departmentRepository.GetDepartment(id);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            if (!await _departmentRepository.DeleteDepartment(medicineToDelete))
+            _unitOfWork.DepartmentRepository.Delete(departmentToDelete);
+            if (!await _unitOfWork.Save())
             {
                 ModelState.AddModelError("", "Error when deleting department please try again latter");
                 return BadRequest(ModelState);

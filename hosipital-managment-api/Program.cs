@@ -16,10 +16,11 @@ builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
 builder.Services.AddControllers(options => options.UseDateOnlyTimeOnlyStringConverters())
     .AddJsonOptions(options => options.UseDateOnlyTimeOnlyStringConverters()); 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
-builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>();
 builder.Services.AddScoped<IPrescriptionMedicineRepository, PrescriptionMedicineRepository>();
 builder.Services.AddScoped<IPrescriptionRepository,PrescriptionRepository>();
+
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.SetDatabaseConnection(builder.Configuration);

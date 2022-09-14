@@ -7,8 +7,8 @@ namespace hosipital_managment_api.Repository
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        private readonly AppDbContext _context;
-        internal readonly DbSet<TEntity> _dbSet;
+        internal AppDbContext _context;
+        internal DbSet<TEntity> _dbSet;
         public Repository(AppDbContext context,DbSet<TEntity> dbSet)
         {
             _context = context;
@@ -70,10 +70,9 @@ namespace hosipital_managment_api.Repository
             await _dbSet.AddAsync(entity);
         }
 
-
         public virtual async Task AddRange(IEnumerable<TEntity> entities)
         {
-            _dbSet.AddRange(entities);
+            await _dbSet.AddRangeAsync(entities);
         }
         public virtual void Update(TEntity entity)
         {
@@ -85,14 +84,13 @@ namespace hosipital_managment_api.Repository
             TEntity entity = await _dbSet.FindAsync(id);
             _dbSet.Remove(entity);
         }
-        public virtual async Task Delete(TEntity entity)
+        public virtual void Delete(TEntity entity)
         {
             _dbSet.Remove(entity);
         }
-
         public virtual void DeleteRange(IEnumerable<TEntity> entities)
         {
-            _context.Set<TEntity>().RemoveRange(entities);
+            _dbSet.RemoveRange(entities);
         }
     }
 }

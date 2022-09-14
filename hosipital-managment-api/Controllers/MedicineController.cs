@@ -8,15 +8,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace hosipital_managment_api.Controllers
 {
-    [Authorize(Roles = "Doctor,Nurse,Pharmacist")]
+    //[Authorize(Roles = "Doctor,Nurse,Pharmacist")]
     [Route("api/[controller]")]
     [ApiController]
     public class MedicineController : ControllerBase
     {
-        private readonly IMedicineRepository _medicineRepository;
-        public MedicineController(IMedicineRepository medicineRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public MedicineController(IUnitOfWork unitOfWork)
         {
-            _medicineRepository = medicineRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -25,9 +25,11 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Get()
         {
-            var medicines = await _medicineRepository.GetMedicines();
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var medicines = await _unitOfWork.MedicineRepository.GetAll();
+            if (medicines == null)
+            {
+                return NoContent();
+            }
             return Ok(medicines);
         }
 
@@ -38,19 +40,16 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Get(int id)
         {
-
-            if (! await _medicineRepository.MedicineExist(id))
+            var medicine= await _unitOfWork.MedicineRepository.GetById(id);
+            if(medicine == null)
             {
                 return NotFound();
             }
-            var medicine= await _medicineRepository.GetMedicine(id);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             return Ok(medicine);
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(String))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -58,13 +57,17 @@ namespace hosipital_managment_api.Controllers
         {
             if (medicine == null)
                 return BadRequest(ModelState);
-
-            if (!await _medicineRepository.CreateMedicine(medicine))
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            await _unitOfWork.MedicineRepository.Add(medicine);
+            if (!await _unitOfWork.Save())
             {
                 ModelState.AddModelError("", "Error when adding medicine to database please try again latter");
                 return StatusCode(500, ModelState);
             }
-            return Ok("Succesfully created medicine");
+            return CreatedAtAction(nameof(Get), new { id = medicine.Id }, medicine);
         }
 
         [HttpPut("{id}")]
@@ -80,7 +83,8 @@ namespace hosipital_managment_api.Controllers
             {
                 return BadRequest();
             }
-            if (!await _medicineRepository.UpdateMedicine(medicine))
+            _unitOfWork.MedicineRepository.Update(medicine);
+            if (!await _unitOfWork.Save())
             {
                 ModelState.AddModelError("", "Error when updataing medicine please try again latter");
                 return StatusCode(500, ModelState);
@@ -95,14 +99,13 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteMedicine(int id)
         {
-            if (!await _medicineRepository.MedicineExist(id))
+            var medicineToDelete = await _unitOfWork.MedicineRepository.GetById(id);
+            if(medicineToDelete == null)
             {
                 return NotFound();
             }
-            var medicineToDelete = await _medicineRepository.GetMedicine(id);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            if (!await _medicineRepository.DeleteMedicine(medicineToDelete))
+            _unitOfWork.MedicineRepository.Delete(medicineToDelete);
+            if (!await _unitOfWork.Save())
             {
                 ModelState.AddModelError("", "Error when deleting medicine please try again latter");
                 return BadRequest(ModelState);

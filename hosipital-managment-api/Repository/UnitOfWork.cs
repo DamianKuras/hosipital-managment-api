@@ -28,12 +28,12 @@ namespace hosipital_managment_api.Repository
         {
             _context.Dispose();
             GC.SuppressFinalize(this);
-
         }
 
-        public async Task Save()
+        public async Task<bool> Save()
         {
-            await _context.SaveChangesAsync();
+            var saved = await _context.SaveChangesAsync();
+            return saved > 0;
         }
     }
 }

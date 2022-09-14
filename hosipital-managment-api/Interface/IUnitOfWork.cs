@@ -8,6 +8,6 @@ namespace hosipital_managment_api.Interface
         IRepository<Medicine> MedicineRepository { get; }
         IRepository<Prescription> PrescriptionRepository { get; }
         IRepository<PrescriptionMedicine> PrescriptionMedicineRepository { get; }
-        Task Save();
+        Task<bool> Save();
     }
 }

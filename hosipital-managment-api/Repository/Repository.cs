@@ -14,7 +14,7 @@ namespace hosipital_managment_api.Repository
             _context = context;
             _dbSet = dbSet;
         }
-        public virtual async Task<TEntity> GetById(int id, List<string>? includes = null)
+        public virtual async Task<TEntity> GetById(int id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -65,14 +65,14 @@ namespace hosipital_managment_api.Repository
             
             return await query.AsNoTracking().ToListAsync();
         }
-        public virtual async Task Add(TEntity entity)
+        public virtual void Add(TEntity entity)
         {
-            await _dbSet.AddAsync(entity);
+            _dbSet.Add(entity);
         }
 
-        public virtual async Task AddRange(IEnumerable<TEntity> entities)
+        public virtual void AddRange(IEnumerable<TEntity> entities)
         {
-            await _dbSet.AddRangeAsync(entities);
+             _dbSet.AddRange(entities);
         }
         public virtual void Update(TEntity entity)
         {

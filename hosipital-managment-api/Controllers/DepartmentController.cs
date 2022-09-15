@@ -19,13 +19,13 @@ namespace hosipital_managment_api.Controllers
         [AllowAnonymous]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Department))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get()
         {
             var departments = await _unitOfWork.DepartmentRepository.GetAll();
             if(departments == null)
             {
-                return NoContent();
+                return NotFound();
             }
             return Ok(departments);
         }
@@ -56,7 +56,7 @@ namespace hosipital_managment_api.Controllers
         {
             if (department == null)
                 return BadRequest(ModelState);
-            await _unitOfWork.DepartmentRepository.Add(department);
+            _unitOfWork.DepartmentRepository.Add(department);
             if (!await _unitOfWork.Save())
             {
                 ModelState.AddModelError("", "Error when adding department to database please try again latter");
@@ -81,7 +81,7 @@ namespace hosipital_managment_api.Controllers
             }
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
             _unitOfWork.DepartmentRepository.Update(department);
 

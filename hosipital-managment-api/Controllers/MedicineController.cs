@@ -61,7 +61,7 @@ namespace hosipital_managment_api.Controllers
             {
                 return BadRequest();
             }
-            await _unitOfWork.MedicineRepository.Add(medicine);
+            _unitOfWork.MedicineRepository.Add(medicine);
             if (!await _unitOfWork.Save())
             {
                 ModelState.AddModelError("", "Error when adding medicine to database please try again latter");
@@ -81,7 +81,7 @@ namespace hosipital_managment_api.Controllers
                 return BadRequest(ModelState);
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
             _unitOfWork.MedicineRepository.Update(medicine);
             if (!await _unitOfWork.Save())

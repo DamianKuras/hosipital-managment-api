@@ -127,7 +127,7 @@ namespace hosipital_managment_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("hosipital_managment_api.Models.Medicine", b =>
@@ -156,7 +156,7 @@ namespace hosipital_managment_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Medicines");
+                    b.ToTable("Medicines", (string)null);
                 });
 
             modelBuilder.Entity("hosipital_managment_api.Models.Prescription", b =>
@@ -187,7 +187,7 @@ namespace hosipital_managment_api.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Prescriptions");
+                    b.ToTable("Prescriptions", (string)null);
                 });
 
             modelBuilder.Entity("hosipital_managment_api.Models.PrescriptionMedicine", b =>
@@ -217,7 +217,7 @@ namespace hosipital_managment_api.Migrations
 
                     b.HasIndex("PrescriptionId");
 
-                    b.ToTable("PrescriptionMedicines");
+                    b.ToTable("PrescriptionMedicines", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

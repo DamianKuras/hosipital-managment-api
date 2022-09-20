@@ -1,11 +1,12 @@
-﻿using hosipital_managment_api.Interface;
+﻿using hosipital_managment_api.ActionFilters;
+using hosipital_managment_api.Interface;
 using hosipital_managment_api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 namespace hosipital_managment_api.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class DepartmentController : ControllerBase
@@ -47,6 +48,7 @@ namespace hosipital_managment_api.Controllers
             return Ok(department);
         }
 
+        [DepartmentValidationFilter]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -54,8 +56,6 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] Department department)
         {
-            if (department == null)
-                return BadRequest(ModelState);
             _unitOfWork.DepartmentRepository.Add(department);
             if (!await _unitOfWork.Save())
             {
@@ -65,6 +65,7 @@ namespace hosipital_managment_api.Controllers
             return CreatedAtAction(nameof(Get),new {id=department.Id},department);
         }
 
+        [DepartmentValidationFilter]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -72,19 +73,12 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update(int id,[FromBody] Department department)
         {
-            if (department == null || id != department.Id)
-                return BadRequest(ModelState);
             var departmentToUpdate = _unitOfWork.DepartmentRepository.GetById(id);
-            if(departmentToUpdate == null)
-            {
-                return BadRequest(ModelState);
-            }
-            if (!ModelState.IsValid)
+            if(departmentToUpdate == null || id != department.Id)
             {
                 return BadRequest(ModelState);
             }
             _unitOfWork.DepartmentRepository.Update(department);
-
             if (!await _unitOfWork.Save())
             {
                 ModelState.AddModelError("", "Error when updataing department please try again latter");

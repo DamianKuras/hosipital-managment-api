@@ -1,4 +1,5 @@
-﻿using hosipital_managment_api.Data;
+﻿using hosipital_managment_api.ActionFilters;
+using hosipital_managment_api.Data;
 using hosipital_managment_api.Interface;
 using hosipital_managment_api.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -48,6 +49,7 @@ namespace hosipital_managment_api.Controllers
             return Ok(medicine);
         }
 
+        [MedicineValidationFilterAttribute]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -55,12 +57,6 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post(Medicine medicine)
         {
-            if (medicine == null)
-                return BadRequest(ModelState);
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
             _unitOfWork.MedicineRepository.Add(medicine);
             if (!await _unitOfWork.Save())
             {
@@ -70,6 +66,7 @@ namespace hosipital_managment_api.Controllers
             return CreatedAtAction(nameof(Get), new { id = medicine.Id }, medicine);
         }
 
+        [MedicineValidationFilterAttribute]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -77,12 +74,6 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update(Medicine medicine)
         {
-            if (medicine == null)
-                return BadRequest(ModelState);
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             _unitOfWork.MedicineRepository.Update(medicine);
             if (!await _unitOfWork.Save())
             {

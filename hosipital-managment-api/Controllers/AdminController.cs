@@ -10,6 +10,7 @@ namespace hosipital_managment_api.Controllers
     [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class AdminController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -29,8 +30,6 @@ namespace hosipital_managment_api.Controllers
         public async Task<IActionResult> Get()
         {
             var users = await _userManager.Users.ToListAsync();
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             return Ok(users);
         }
 
@@ -42,8 +41,10 @@ namespace hosipital_managment_api.Controllers
         public async Task<IActionResult> GetUser(string id)
         {
             var user = await _context.Users.FindAsync(id);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (user == null)
+            {
+                return NotFound();
+            }
             return Ok(user);
         }
 
@@ -60,9 +61,6 @@ namespace hosipital_managment_api.Controllers
             {
                 return NotFound();
             }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             IdentityResult result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {

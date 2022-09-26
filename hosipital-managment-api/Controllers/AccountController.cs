@@ -13,19 +13,18 @@ namespace hosipital_managment_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApiUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         public AccountController(UserManager<ApiUser> userManager, 
-            IMapper mapper, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
+            IMapper mapper, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
             _mapper = mapper;
-            _roleManager = roleManager;
         }
 
         [HttpPost]
@@ -38,11 +37,6 @@ namespace hosipital_managment_api.Controllers
             if (userExists != null)
             {
                 return BadRequest(ModelState);
-            }
-                
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState); 
             }
             var user = _mapper.Map<ApiUser>(registerDto);
             var result = await _userManager.CreateAsync(user, registerDto.Password);

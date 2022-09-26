@@ -12,6 +12,7 @@ namespace hosipital_managment_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class PrescriptionController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -33,6 +34,7 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(int id)
         {
+            
             var prescription = await _unitOfWork.PrescriptionRepository.FindOne(p=>p.Id==id,new List<string> { "Doctor","Patient"});
             if (prescription == null)
             {
@@ -59,8 +61,6 @@ namespace hosipital_managment_api.Controllers
             var prescriptions = await _unitOfWork.PrescriptionRepository.FindAll(
                 p=>p.PatientId==patientId, new List<string> { "Doctor", "Patient" });
             var prescriptionsListDisplayDTO = _mapper.Map<IEnumerable<PrescriptionsListDisplayDTO>>(prescriptions);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             return Ok(prescriptionsListDisplayDTO);
         }
         [Authorize(Roles = "Admin,Doctor")]
@@ -79,8 +79,6 @@ namespace hosipital_managment_api.Controllers
             var prescriptions = await _unitOfWork.PrescriptionRepository.FindAll(
                 p=>p.DoctorId == doctorId, new List<string> { "Doctor", "Patient" });
             var prescriptionsListDisplayDTO = _mapper.Map<IEnumerable<PrescriptionsListDisplayDTO>>(prescriptions);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             return Ok(prescriptionsListDisplayDTO);
         }
 
@@ -109,10 +107,7 @@ namespace hosipital_managment_api.Controllers
                 Created_at = DateTime.Now,
                 ExpDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(6)),
             };
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+
             _unitOfWork.PrescriptionRepository.Add(prescription);
             foreach (var prescriptionMedicineDTO in prescriptionDTO.PrescriptionMedicinesDTO)
             {
@@ -125,12 +120,6 @@ namespace hosipital_managment_api.Controllers
                     Quantity = prescriptionMedicineDTO.Quantity,
                     Dosage = prescriptionMedicineDTO.Dosage
                 };
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-
             }
             if(!await _unitOfWork.Save())
             {

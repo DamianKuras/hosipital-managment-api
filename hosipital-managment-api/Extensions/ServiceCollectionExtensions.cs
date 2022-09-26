@@ -17,7 +17,7 @@ namespace hosipital_managment_api.Extensions
         {
             
             var connectionString = configuration.GetConnectionString("AppDbConnection")
-    + ";password=" + configuration["DbPassword"].ToString();
+                + ";password=" + configuration["DbPassword"].ToString();
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
             return services;
         }

@@ -7,6 +7,7 @@
     <RootNamespace>hosipital_managment_api</RootNamespace>
     <UserSecretsId>ae508de2-3e8f-4df7-ae24-c05e9a5ab4be</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
   </PropertyGroup>
 
   <ItemGroup>

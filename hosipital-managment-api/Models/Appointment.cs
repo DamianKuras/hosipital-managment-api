@@ -1,4 +1,5 @@
 ﻿using hosipital_managment_api.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace hosipital_managment_api.Models
 {
@@ -9,7 +10,11 @@ namespace hosipital_managment_api.Models
         public string PatientId { get; set; }
         public ApiUser Doctor { get; set; }
         public string DoctorId { get; set; }
+
+        [Required]
         public DateTimeOffset Date { get; set; }
+
+        [Required]
         public string Status { get; set; }
         
     }

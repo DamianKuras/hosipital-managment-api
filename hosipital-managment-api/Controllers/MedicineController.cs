@@ -12,6 +12,7 @@ namespace hosipital_managment_api.Controllers
     //[Authorize(Roles = "Doctor,Nurse,Pharmacist")]
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class MedicineController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

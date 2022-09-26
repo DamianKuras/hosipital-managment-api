@@ -9,6 +9,7 @@ namespace hosipital_managment_api.Controllers
     //[Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class DepartmentController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -19,7 +20,7 @@ namespace hosipital_managment_api.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Department))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get()
         {
@@ -32,7 +33,7 @@ namespace hosipital_managment_api.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Department))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -43,8 +44,6 @@ namespace hosipital_managment_api.Controllers
             {
                 return NotFound();
             }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             return Ok(department);
         }
 
@@ -81,7 +80,7 @@ namespace hosipital_managment_api.Controllers
             _unitOfWork.DepartmentRepository.Update(department);
             if (!await _unitOfWork.Save())
             {
-                ModelState.AddModelError("", "Error when updataing department please try again latter");
+                ModelState.AddModelError("error: ", "Error when updataing department please try again latter");
                 return StatusCode(500, ModelState);
             }
             return NoContent();

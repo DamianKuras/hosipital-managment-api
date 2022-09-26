@@ -14,10 +14,6 @@ namespace hosipital_managment_api.ActionFilters
                 context.Result = new BadRequestObjectResult("Departmnet value cannot be null");
                 return;
             }
-            if (!context.ModelState.IsValid)
-            {
-                context.Result = new BadRequestObjectResult(context.ModelState);
-            }
         }
     }
 }

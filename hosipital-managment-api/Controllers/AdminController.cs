@@ -1,4 +1,6 @@
 ﻿using hosipital_managment_api.Data;
+using hosipital_managment_api.Extensions;
+using hosipital_managment_api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -27,9 +29,9 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] PagingParameters pagingParameters)
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await PagedList<ApiUser>.ToPagedList(_userManager.Users, pagingParameters.PageNumber,pagingParameters.PageSize);
             return Ok(users);
         }
 

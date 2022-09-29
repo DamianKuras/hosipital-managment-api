@@ -1,0 +1,21 @@
+﻿namespace hosipital_managment_api.Models
+{
+    public class PagingParameters
+    {
+        const int maxPageSize = 50;
+        public int PageNumber { get; set; } = 1;
+        private int _pageSize = 10;
+        public int PageSize
+        {
+            get
+            {
+                return _pageSize;
+            }
+            set
+            {
+                _pageSize = (value > maxPageSize) ? maxPageSize : value;
+                _pageSize = (_pageSize > 0) ? _pageSize : 1;
+            }
+        }
+    }
+}

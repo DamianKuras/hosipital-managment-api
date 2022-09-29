@@ -53,12 +53,12 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Patient(string patientId)
+        public async Task<IActionResult> Patient([FromQuery] PagingParameters pagingParameters,string patientId)
         {
             var patient = await _userManager.FindByIdAsync(patientId);
             if (patient == null)
                 return NotFound();
-            var prescriptions = await _unitOfWork.PrescriptionRepository.FindAll(
+            var prescriptions = await _unitOfWork.PrescriptionRepository.FindPaged(pagingParameters,
                 p=>p.PatientId==patientId, new List<string> { "Doctor", "Patient" });
             var prescriptionsListDisplayDTO = _mapper.Map<IEnumerable<PrescriptionsListDisplayDTO>>(prescriptions);
             return Ok(prescriptionsListDisplayDTO);
@@ -70,14 +70,14 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task<IActionResult> Doctor(string doctorId)
+        public async Task<IActionResult> Doctor([FromQuery] PagingParameters pagingParameters,string doctorId)
         {
             var doctor = await _userManager.FindByIdAsync(doctorId);
             var isDoctor = await _userManager.IsInRoleAsync(doctor, "Doctor");
             if (doctor == null || !isDoctor)
                 return NotFound();
-            var prescriptions = await _unitOfWork.PrescriptionRepository.FindAll(
-                p=>p.DoctorId == doctorId, new List<string> { "Doctor", "Patient" });
+            var prescriptions = await _unitOfWork.PrescriptionRepository.FindPaged(pagingParameters,
+                p =>p.DoctorId == doctorId, new List<string> { "Doctor", "Patient" });
             var prescriptionsListDisplayDTO = _mapper.Map<IEnumerable<PrescriptionsListDisplayDTO>>(prescriptions);
             return Ok(prescriptionsListDisplayDTO);
         }

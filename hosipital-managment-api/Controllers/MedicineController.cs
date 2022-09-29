@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace hosipital_managment_api.Controllers
 {
-    //[Authorize(Roles = "Doctor,Nurse,Pharmacist")]
+    [Authorize(Roles = "Doctor,Nurse,Pharmacist")]
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
@@ -25,13 +26,10 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Medicine))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] PagingParameters pagingParameters)
         {
-            var medicines = await _unitOfWork.MedicineRepository.GetAll();
-            if (medicines == null)
-            {
-                return NoContent();
-            }
+            var medicines = await _unitOfWork.MedicineRepository.GetAll(pagingParameters);
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(medicines.PagingMetadata));
             return Ok(medicines);
         }
 

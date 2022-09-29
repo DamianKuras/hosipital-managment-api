@@ -4,9 +4,11 @@ using hosipital_managment_api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+
 namespace hosipital_managment_api.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
@@ -22,13 +24,12 @@ namespace hosipital_managment_api.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get()
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> Get([FromQuery] PagingParameters pagingParameters)
         {
-            var departments = await _unitOfWork.DepartmentRepository.GetAll();
-            if(departments == null)
-            {
-                return NotFound();
-            }
+            var departments = await _unitOfWork.DepartmentRepository.GetAll(pagingParameters);
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(departments.PagingMetadata));
             return Ok(departments);
         }
 

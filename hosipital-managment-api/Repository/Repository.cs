@@ -1,5 +1,7 @@
 ﻿using hosipital_managment_api.Data;
+using hosipital_managment_api.Extensions;
 using hosipital_managment_api.Interface;
+using hosipital_managment_api.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -19,7 +21,7 @@ namespace hosipital_managment_api.Repository
             return await _dbSet.FindAsync(id);
         }
 
-        public virtual async Task<IEnumerable<TEntity>> GetAll(List<string>? includes = null)
+        public virtual async Task<PagedList<TEntity>> GetAll(PagingParameters pagingParameters, List<string>? includes = null)
         {
             IQueryable<TEntity> query = _dbSet;
             if (includes != null)
@@ -29,7 +31,7 @@ namespace hosipital_managment_api.Repository
                     query = query.Include(includeProperty);
                 }
             }
-            return await query.AsNoTracking().ToListAsync();
+            return await PagedList<TEntity>.ToPagedList(query.AsNoTracking(), pagingParameters.PageNumber, pagingParameters.PageSize);
         }
         public virtual async Task<TEntity> FindOne(Expression<Func<TEntity, bool>> expression, List<string>? includes = null)
         {
@@ -64,6 +66,22 @@ namespace hosipital_managment_api.Repository
             }
             
             return await query.AsNoTracking().ToListAsync();
+        }
+        public virtual async Task<IEnumerable<TEntity>> FindPaged(PagingParameters pagingParameters,Expression<Func<TEntity, bool>> expression, List<string>? includes = null)
+        {
+            IQueryable<TEntity> query = _dbSet;
+            if (expression != null)
+            {
+                query = query.Where(expression);
+            }
+            if (includes != null)
+            {
+                foreach (var includeProperty in includes)
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
+            return await PagedList<TEntity>.ToPagedList(query.AsNoTracking(), pagingParameters.PageNumber, pagingParameters.PageSize);
         }
         public virtual void Add(TEntity entity)
         {

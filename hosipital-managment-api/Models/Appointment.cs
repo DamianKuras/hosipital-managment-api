@@ -5,7 +5,7 @@ namespace hosipital_managment_api.Models
 {
     public class Appointment
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public ApiUser Patient { get; set; }
         public string PatientId { get; set; }
         public ApiUser Doctor { get; set; }

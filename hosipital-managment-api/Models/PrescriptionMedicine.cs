@@ -4,12 +4,12 @@ namespace hosipital_managment_api.Models
 {
     public class PrescriptionMedicine
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public Prescription Prescription { get; set; }
-        public int PrescriptionId { get; set; }
+        public Guid PrescriptionId { get; init; }
         public Medicine Medicine { get; set; }
-        public int MedicineId { get; set; }
+        public Guid MedicineId { get; init; }
         [Required]
         public int Quantity { get; set; }
         [Required]

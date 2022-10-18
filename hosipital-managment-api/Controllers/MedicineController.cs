@@ -38,7 +38,7 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var medicine= await _unitOfWork.MedicineRepository.GetById(id);
             if(medicine == null)
@@ -87,7 +87,7 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteMedicine(int id)
+        public async Task<IActionResult> DeleteMedicine(Guid id)
         {
             var medicineToDelete = await _unitOfWork.MedicineRepository.GetById(id);
             if(medicineToDelete == null)

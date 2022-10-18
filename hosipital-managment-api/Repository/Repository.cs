@@ -16,7 +16,7 @@ namespace hosipital_managment_api.Repository
             _context = context;
             _dbSet = dbSet;
         }
-        public virtual async Task<TEntity> GetById(int id)
+        public virtual async Task<TEntity> GetById(Guid id)
         {
             return await _dbSet.FindAsync(id);
         }

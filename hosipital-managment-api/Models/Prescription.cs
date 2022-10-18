@@ -6,7 +6,7 @@ namespace hosipital_managment_api.Models
 {
     public class Prescription
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public ApiUser Patient { get; set; }
 

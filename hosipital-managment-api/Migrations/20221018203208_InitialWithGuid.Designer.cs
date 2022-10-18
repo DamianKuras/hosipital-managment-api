@@ -12,8 +12,8 @@ using hosipital_managment_api.Data;
 namespace hosipital_managment_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220730200704_AddedIdentity")]
-    partial class AddedIdentity
+    [Migration("20221018203208_InitialWithGuid")]
+    partial class InitialWithGuid
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,13 @@ namespace hosipital_managment_api.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
+
+                    b.Property<DateOnly>("BirthDay")
+                        .HasColumnType("date");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -74,7 +81,15 @@ namespace hosipital_managment_api.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Postcode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -96,13 +111,30 @@ namespace hosipital_managment_api.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("hosipital_managment_api.Models.Department", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Descritpion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Departments");
+                });
+
             modelBuilder.Entity("hosipital_managment_api.Models.Medicine", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -112,12 +144,74 @@ namespace hosipital_managment_api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("RouteOfAdministration")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Strength")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Medicines");
+                });
+
+            modelBuilder.Entity("hosipital_managment_api.Models.Prescription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("Created_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DoctorId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("ExpDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("PatientId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("Prescriptions");
+                });
+
+            modelBuilder.Entity("hosipital_managment_api.Models.PrescriptionMedicine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Dosage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("MedicineId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PrescriptionId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Medicines");
+                    b.HasIndex("MedicineId");
+
+                    b.HasIndex("PrescriptionId");
+
+                    b.ToTable("PrescriptionMedicines");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -250,6 +344,44 @@ namespace hosipital_managment_api.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("hosipital_managment_api.Models.Prescription", b =>
+                {
+                    b.HasOne("hosipital_managment_api.Data.ApiUser", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hosipital_managment_api.Data.ApiUser", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("hosipital_managment_api.Models.PrescriptionMedicine", b =>
+                {
+                    b.HasOne("hosipital_managment_api.Models.Medicine", "Medicine")
+                        .WithMany()
+                        .HasForeignKey("MedicineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hosipital_managment_api.Models.Prescription", "Prescription")
+                        .WithMany()
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Medicine");
+
+                    b.Navigation("Prescription");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

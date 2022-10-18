@@ -16,7 +16,10 @@ namespace hosipital_managment_api.Data
                     Email = "Admin@gmail.com",
                     PhoneNumber = "12345789",
                     FirstName = "Admin",
-                    LastName = "Admin"
+                    LastName = "Admin",
+                    City = "testCity",
+                    Street = "testStreet",
+                    Postcode = "code"
                 };
                 var result = userManager.CreateAsync(admin, password).Result;
                 if (result.Succeeded)

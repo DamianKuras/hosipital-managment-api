@@ -20,6 +20,9 @@ namespace hosipital_managment_api.Dto
         [Required]
         [StringLength(15, ErrorMessage = "Your password needs to be between {1} and {2} characters", MinimumLength = 5)]
         public string Password { get; set; }
+        public string City { get; set; }
+        public string Street { get; set; }
+        public string Postcode { get; set; }
     }
     public class LoginDto
     {

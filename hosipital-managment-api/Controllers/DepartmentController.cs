@@ -34,11 +34,11 @@ namespace hosipital_managment_api.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Department))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var department = await _unitOfWork.DepartmentRepository.GetById(id);
             if(department == null)
@@ -71,7 +71,7 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update(int id,[FromBody] Department department)
+        public async Task<IActionResult> Update(Guid id,[FromBody] Department department)
         {
             var departmentToUpdate = _unitOfWork.DepartmentRepository.GetById(id);
             if(departmentToUpdate == null || id != department.Id)
@@ -92,7 +92,7 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var departmentToDelete = await _unitOfWork.DepartmentRepository.GetById(id);
             if (departmentToDelete == null)

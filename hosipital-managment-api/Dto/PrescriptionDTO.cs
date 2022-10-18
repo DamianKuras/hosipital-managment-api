@@ -17,9 +17,7 @@
         public string PatientCity { get; set; }
         public string PatientStreet { get; set; }
         public string PatientPostcode { get; set; }
-
         public string PatientPhoneNumber { get; set; }
-
         public string DoctorFirstName { get; set; }
         public string DoctorLastName { get; set; }
         public string DoctorPhoneNumber { get; set; }
@@ -29,7 +27,7 @@
     }
     public class PrescriptionsListDisplayDTO
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public DateTimeOffset Created_at { get; set; }
         public DateOnly ExpDate { get; set; }
         public string PatientFirstName { get; set; }

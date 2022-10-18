@@ -4,7 +4,7 @@ namespace hosipital_managment_api.Models
 {
     public class Medicine
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         [MinLength(3, ErrorMessage = "The name field must be at least 3 characters long")]

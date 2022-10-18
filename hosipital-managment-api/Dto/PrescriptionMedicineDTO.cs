@@ -3,7 +3,7 @@
     public class PrescriptionMedicineDTO
     {
         public string Dosage { get; set; }
-        public int MedicineId { get; set; }
+        public Guid MedicineId { get; set; }
         public int Quantity { get; set; }
 
     }

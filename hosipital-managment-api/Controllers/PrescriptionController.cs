@@ -32,7 +32,7 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(Guid id)
         {
             
             var prescription = await _unitOfWork.PrescriptionRepository.FindOne(p=>p.Id==id,new List<string> { "Doctor","Patient"});
@@ -120,13 +120,14 @@ namespace hosipital_managment_api.Controllers
                     Quantity = prescriptionMedicineDTO.Quantity,
                     Dosage = prescriptionMedicineDTO.Dosage
                 };
+                _unitOfWork.PrescriptionMedicineRepository.Add(prescriptionMedicine);
             }
             if(!await _unitOfWork.Save())
             {
                 ModelState.AddModelError("", "Error when adding prescription to database please try again latter");
                 return StatusCode(500, ModelState);
             }
-            return CreatedAtAction(nameof(Get), new { id = prescription.Id });
+            return Ok();
         }
     }
 }

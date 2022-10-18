@@ -111,11 +111,9 @@ namespace hosipital_managment_api.Migrations
 
             modelBuilder.Entity("hosipital_managment_api.Models.Department", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Descritpion")
                         .IsRequired()
@@ -127,16 +125,14 @@ namespace hosipital_managment_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("hosipital_managment_api.Models.Medicine", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -156,16 +152,14 @@ namespace hosipital_managment_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Medicines", (string)null);
+                    b.ToTable("Medicines");
                 });
 
             modelBuilder.Entity("hosipital_managment_api.Models.Prescription", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("Created_at")
                         .HasColumnType("timestamp with time zone");
@@ -187,26 +181,24 @@ namespace hosipital_managment_api.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Prescriptions", (string)null);
+                    b.ToTable("Prescriptions");
                 });
 
             modelBuilder.Entity("hosipital_managment_api.Models.PrescriptionMedicine", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Dosage")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("MedicineId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("MedicineId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("PrescriptionId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("PrescriptionId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
@@ -217,7 +209,7 @@ namespace hosipital_managment_api.Migrations
 
                     b.HasIndex("PrescriptionId");
 
-                    b.ToTable("PrescriptionMedicines", (string)null);
+                    b.ToTable("PrescriptionMedicines");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

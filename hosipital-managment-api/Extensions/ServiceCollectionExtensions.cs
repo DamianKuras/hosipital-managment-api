@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Serilog;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace hosipital_managment_api.Extensions
 {
@@ -22,11 +24,10 @@ namespace hosipital_managment_api.Extensions
             return services;
         }
 
-        public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
+        public static IServiceCollection InstallSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(option =>
-            {
-                option.SwaggerDoc("v1", new OpenApiInfo { Title = "HMS API", Version = "v1" });
+            {  
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -54,6 +55,8 @@ namespace hosipital_managment_api.Extensions
             });
             return services;
         }
+
+
 
         public static IServiceCollection ConfigureAuthenthication(this IServiceCollection services, IConfiguration configuration)
         {
@@ -96,6 +99,24 @@ namespace hosipital_managment_api.Extensions
                         }.ToString());
                     }
                 });
+            });
+        }
+
+        public static void InstallApiVersioning(this IServiceCollection services)
+        {
+            services.AddApiVersioning(opt =>
+            {
+                opt.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+                opt.AssumeDefaultVersionWhenUnspecified = true;
+                opt.ReportApiVersions = true;
+            });
+        }
+        public static void InstallVersionedApiExplorer(this IServiceCollection services)
+        {
+            services.AddVersionedApiExplorer(setup =>
+            {
+                setup.GroupNameFormat = "'v'VVV";
+                setup.SubstituteApiVersionInUrl = true;
             });
         }
     }

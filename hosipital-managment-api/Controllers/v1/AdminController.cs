@@ -7,11 +7,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace hosipital_managment_api.Controllers
+namespace hosipital_managment_api.Controllers.v1
 {
-    [Authorize(Roles = "Admin")]
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize(Roles = "Admin")]
     [Produces("application/json")]
     public class AdminController : ControllerBase
     {
@@ -28,10 +29,10 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiUser))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        
+
         public async Task<IActionResult> Get([FromQuery] PagingParameters pagingParameters)
         {
-            var users = await PagedList<ApiUser>.ToPagedList(_userManager.Users, pagingParameters.PageNumber,pagingParameters.PageSize);
+            var users = await PagedList<ApiUser>.ToPagedList(_userManager.Users, pagingParameters.PageNumber, pagingParameters.PageSize);
             return Ok(users);
         }
 
@@ -58,8 +59,8 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            var user = await _userManager.FindByIdAsync(id); 
-            if (user==null)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }

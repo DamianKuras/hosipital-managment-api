@@ -8,11 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace hosipital_managment_api.Controllers
+namespace hosipital_managment_api.Controllers.v1
 {
-    [Authorize(Roles = "Doctor,Nurse,Pharmacist")]
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize(Roles = "Doctor,Nurse,Pharmacist")]
     [Produces("application/json")]
     public class MedicineController : ControllerBase
     {
@@ -40,15 +41,15 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Get(Guid id)
         {
-            var medicine= await _unitOfWork.MedicineRepository.GetById(id);
-            if(medicine == null)
+            var medicine = await _unitOfWork.MedicineRepository.GetById(id);
+            if (medicine == null)
             {
                 return NotFound();
             }
             return Ok(medicine);
         }
 
-        [MedicineValidationFilterAttribute]
+        [MedicineValidationFilter]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -65,7 +66,7 @@ namespace hosipital_managment_api.Controllers
             return CreatedAtAction(nameof(Get), new { id = medicine.Id }, medicine);
         }
 
-        [MedicineValidationFilterAttribute]
+        [MedicineValidationFilter]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -90,7 +91,7 @@ namespace hosipital_managment_api.Controllers
         public async Task<IActionResult> DeleteMedicine(Guid id)
         {
             var medicineToDelete = await _unitOfWork.MedicineRepository.GetById(id);
-            if(medicineToDelete == null)
+            if (medicineToDelete == null)
             {
                 return NotFound();
             }

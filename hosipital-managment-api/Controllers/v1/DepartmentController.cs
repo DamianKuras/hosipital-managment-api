@@ -6,11 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace hosipital_managment_api.Controllers
+namespace hosipital_managment_api.Controllers.v1
 {
-    [Authorize(Roles = "Admin")]
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize(Roles = "Admin")]
     [Produces("application/json")]
     public class DepartmentController : ControllerBase
     {
@@ -41,7 +42,7 @@ namespace hosipital_managment_api.Controllers
         public async Task<IActionResult> Get(Guid id)
         {
             var department = await _unitOfWork.DepartmentRepository.GetById(id);
-            if(department == null)
+            if (department == null)
             {
                 return NotFound();
             }
@@ -62,7 +63,7 @@ namespace hosipital_managment_api.Controllers
                 ModelState.AddModelError("", "Error when adding department to database please try again latter");
                 return StatusCode(500, ModelState);
             }
-            return CreatedAtAction(nameof(Get),new {id=department.Id},department);
+            return CreatedAtAction(nameof(Get), new { id = department.Id }, department);
         }
 
         [DepartmentValidationFilter]
@@ -71,10 +72,10 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update(Guid id,[FromBody] Department department)
+        public async Task<IActionResult> Update(Guid id, [FromBody] Department department)
         {
             var departmentToUpdate = _unitOfWork.DepartmentRepository.GetById(id);
-            if(departmentToUpdate == null || id != department.Id)
+            if (departmentToUpdate == null || id != department.Id)
             {
                 return BadRequest(ModelState);
             }

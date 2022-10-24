@@ -8,10 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace hosipital_managment_api.Controllers
+namespace hosipital_managment_api.Controllers.v1
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
     public class PrescriptionController : ControllerBase
     {
@@ -34,8 +35,8 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Guid id)
         {
-            
-            var prescription = await _unitOfWork.PrescriptionRepository.FindOne(p=>p.Id==id,new List<string> { "Doctor","Patient"});
+
+            var prescription = await _unitOfWork.PrescriptionRepository.FindOne(p => p.Id == id, new List<string> { "Doctor", "Patient" });
             if (prescription == null)
             {
                 return NotFound();
@@ -43,7 +44,7 @@ namespace hosipital_managment_api.Controllers
             var prescriptionDisplayDTO = _mapper.Map<PrescriptionDisplayDTO>(prescription);
 
             var prescriptionMedicines = await _unitOfWork.PrescriptionMedicineRepository.FindAll(
-                prescriptionMedicine => prescriptionMedicine.PrescriptionId == prescription.Id, new List<string>{ "Medicine"});
+                prescriptionMedicine => prescriptionMedicine.PrescriptionId == prescription.Id, new List<string> { "Medicine" });
             prescriptionDisplayDTO.PrescriptionMedicinesDTO = _mapper.Map<IEnumerable<PrescriptionMedicineDisplayDTO>>(prescriptionMedicines);
             return Ok(prescriptionDisplayDTO);
         }
@@ -53,13 +54,13 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Patient([FromQuery] PagingParameters pagingParameters,string patientId)
+        public async Task<IActionResult> Patient([FromQuery] PagingParameters pagingParameters, string patientId)
         {
             var patient = await _userManager.FindByIdAsync(patientId);
             if (patient == null)
                 return NotFound();
             var prescriptions = await _unitOfWork.PrescriptionRepository.FindPaged(pagingParameters,
-                p=>p.PatientId==patientId, new List<string> { "Doctor", "Patient" });
+                p => p.PatientId == patientId, new List<string> { "Doctor", "Patient" });
             var prescriptionsListDisplayDTO = _mapper.Map<IEnumerable<PrescriptionsListDisplayDTO>>(prescriptions);
             return Ok(prescriptionsListDisplayDTO);
         }
@@ -70,14 +71,14 @@ namespace hosipital_managment_api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task<IActionResult> Doctor([FromQuery] PagingParameters pagingParameters,string doctorId)
+        public async Task<IActionResult> Doctor([FromQuery] PagingParameters pagingParameters, string doctorId)
         {
             var doctor = await _userManager.FindByIdAsync(doctorId);
             var isDoctor = await _userManager.IsInRoleAsync(doctor, "Doctor");
             if (doctor == null || !isDoctor)
                 return NotFound();
             var prescriptions = await _unitOfWork.PrescriptionRepository.FindPaged(pagingParameters,
-                p =>p.DoctorId == doctorId, new List<string> { "Doctor", "Patient" });
+                p => p.DoctorId == doctorId, new List<string> { "Doctor", "Patient" });
             var prescriptionsListDisplayDTO = _mapper.Map<IEnumerable<PrescriptionsListDisplayDTO>>(prescriptions);
             return Ok(prescriptionsListDisplayDTO);
         }
@@ -122,7 +123,7 @@ namespace hosipital_managment_api.Controllers
                 };
                 _unitOfWork.PrescriptionMedicineRepository.Add(prescriptionMedicine);
             }
-            if(!await _unitOfWork.Save())
+            if (!await _unitOfWork.Save())
             {
                 ModelState.AddModelError("", "Error when adding prescription to database please try again latter");
                 return StatusCode(500, ModelState);

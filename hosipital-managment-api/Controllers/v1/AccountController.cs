@@ -9,17 +9,18 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace hosipital_managment_api.Controllers
+namespace hosipital_managment_api.Controllers.v1
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApiUser> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
-        public AccountController(UserManager<ApiUser> userManager, 
+        public AccountController(UserManager<ApiUser> userManager,
             IMapper mapper, IConfiguration configuration)
         {
             _userManager = userManager;
@@ -42,7 +43,7 @@ namespace hosipital_managment_api.Controllers
             var result = await _userManager.CreateAsync(user, registerDto.Password);
             if (!result.Succeeded)
             {
-                foreach(var error in result.Errors)
+                foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(error.Code, error.Description);
                 }

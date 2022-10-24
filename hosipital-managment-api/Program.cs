@@ -9,6 +9,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using hosipital_managment_api.Extensions;
 using Serilog;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
@@ -17,21 +18,31 @@ builder.Services.AddControllers(options => options.UseDateOnlyTimeOnlyStringConv
     .AddJsonOptions(options => options.UseDateOnlyTimeOnlyStringConverters()); 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.SetDatabaseConnection(builder.Configuration);
 builder.Services.AddIdentityCore<ApiUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddDefaultTokenProviders().AddRoles<IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 builder.Services.ConfigureAuthenthication(builder.Configuration);
-builder.Services.ConfigureSwagger();
+builder.Services.InstallApiVersioning();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.InstallVersionedApiExplorer();
+builder.Services.InstallSwagger();
+builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var app = builder.Build();
 app.ConfigureExceptionHandler2();
 
+var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                description.GroupName.ToUpperInvariant());
+        }
+    });
 }
 
 app.UseHttpsRedirection();
